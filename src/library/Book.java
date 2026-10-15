@@ -1,5 +1,6 @@
 package library;
 
+// A book with a fixed author and a longer loan period.
 public final class Book extends LibraryItem {
     private final String author;
 

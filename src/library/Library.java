@@ -14,10 +14,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+// Main library logic: catalog data, members, and loan rules.
 public final class Library {
     private final Map<String, LibraryItem> items = new LinkedHashMap<>();
     private final Map<String, Member> members = new LinkedHashMap<>();
 
+    // Adds a new item unless its ID already exists.
     public void addItem(LibraryItem item) {
         Objects.requireNonNull(item, "Item cannot be null");
         if (items.putIfAbsent(item.getId(), item) != null) {
@@ -25,6 +27,7 @@ public final class Library {
         }
     }
 
+    // Registers a member unless that ID is already taken.
     public void registerMember(Member member) {
         Objects.requireNonNull(member, "Member cannot be null");
         if (members.putIfAbsent(member.getId(), member) != null) {
@@ -33,6 +36,7 @@ public final class Library {
         }
     }
 
+    // Creates a loan when the item is available and the member has space.
     public void borrow(String memberId, String itemId)
             throws ItemNotAvailableException, MemberLimitExceededException {
         Member member = requireMember(memberId);
@@ -51,6 +55,7 @@ public final class Library {
         item.borrow(member);
     }
 
+    // Returns an item and removes its active loan record.
     public void giveBack(String itemId) {
         LibraryItem item = requireItem(itemId);
         if (item.isAvailable()) {
@@ -66,6 +71,7 @@ public final class Library {
         item.giveBack();
     }
 
+    // Finds items whose titles contain the search text, ignoring case.
     public List<LibraryItem> searchByTitle(String text) {
         String query = LibraryItem.requireText(text, "Search text").toLowerCase(Locale.ROOT);
         return items.values().stream()
@@ -74,6 +80,7 @@ public final class Library {
                 .collect(Collectors.toList());
     }
 
+    // Lists all loans due before the supplied date.
     public List<Loan> listOverdueItems(LocalDate date) {
         Objects.requireNonNull(date, "Date cannot be null");
         return members.values().stream()
@@ -107,6 +114,7 @@ public final class Library {
         return item;
     }
 
+    // Loads catalog, member, and loan data from CSV files in a folder.
     public void load(Path directory) throws IOException {
         items.clear();
         members.clear();
@@ -153,6 +161,7 @@ public final class Library {
         }
     }
 
+    // Saves the current state to CSV files in the target folder.
     public void save(Path directory) throws IOException {
         Files.createDirectories(directory);
         List<String> itemRows = new ArrayList<>();
@@ -189,10 +198,12 @@ public final class Library {
         writeRows(directory.resolve("loans.csv"), loanRows);
     }
 
+    // Writes one CSV file with each row already formatted.
     private static void writeRows(Path file, List<String> rows) throws IOException {
         Files.write(file, rows, StandardCharsets.UTF_8);
     }
 
+    // Reads one CSV file and validates each row before processing it.
     private static void readRows(Path file, int expectedFields, RowConsumer consumer) throws IOException {
         List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
         for (int i = 1; i < lines.size(); i++) {

@@ -8,12 +8,14 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
+// Console menu for managing the library catalog and loans.
 public final class LibraryApp {
     private static final Path DATA_DIRECTORY = Paths.get("data");
 
     private LibraryApp() {
     }
 
+    // Runs the interactive loop and saves data on exit.
     public static void main(String[] args) {
         Library library = new Library();
         try {
@@ -77,6 +79,7 @@ public final class LibraryApp {
         }
     }
 
+    // Prints all menu choices for the user.
     private static void printMenu() {
         System.out.println("\n=== Library Management System ===");
         System.out.println("1. Add item");
@@ -90,6 +93,7 @@ public final class LibraryApp {
         System.out.println("0. Save and exit");
     }
 
+    // Adds a book or DVD from the console input.
     private static void addItem(Scanner scanner, Library library) {
         String type = prompt(scanner, "Item type (book/dvd): ").trim().toLowerCase();
         String id = prompt(scanner, "Item ID: ");
@@ -104,6 +108,7 @@ public final class LibraryApp {
         System.out.println("Item added.");
     }
 
+    // Registers a new member from the console input.
     private static void registerMember(Scanner scanner, Library library) {
         String id = prompt(scanner, "Member ID: ");
         String name = prompt(scanner, "Member name: ");
@@ -111,17 +116,20 @@ public final class LibraryApp {
         System.out.println("Member registered.");
     }
 
+    // Borrows an item for a member and prints the result.
     private static void borrowItem(Scanner scanner, Library library)
             throws ItemNotAvailableException, MemberLimitExceededException {
         library.borrow(prompt(scanner, "Member ID: "), prompt(scanner, "Item ID: "));
         System.out.println("Item borrowed. The due date is based on the item's loan period.");
     }
 
+    // Returns a borrowed item to the library.
     private static void returnItem(Scanner scanner, Library library) {
         library.giveBack(prompt(scanner, "Item ID to return: "));
         System.out.println("Item returned.");
     }
 
+    // Lists all loans whose due date has passed.
     private static void listOverdue(Library library) {
         LocalDate today = LocalDate.now();
         List<Loan> overdue = library.listOverdueItems(today);
@@ -133,6 +141,7 @@ public final class LibraryApp {
                 + (today.toEpochDay() - loan.getDueDate().toEpochDay()) + " days overdue)"));
     }
 
+    // Searches catalog entries by title text.
     private static void search(Scanner scanner, Library library) {
         List<LibraryItem> results = library.searchByTitle(prompt(scanner, "Title contains: "));
         if (results.isEmpty()) {
@@ -142,6 +151,7 @@ public final class LibraryApp {
         }
     }
 
+    // Shows every current item in the catalog.
     private static void listItems(Library library) {
         if (library.getItems().isEmpty()) {
             System.out.println("No items registered.");
@@ -150,6 +160,7 @@ public final class LibraryApp {
         library.getItems().forEach(System.out::println);
     }
 
+    // Shows every member and their active loans.
     private static void listMembers(Library library) {
         if (library.getMembers().isEmpty()) {
             System.out.println("No members registered.");
@@ -161,6 +172,7 @@ public final class LibraryApp {
         });
     }
 
+    // Reads a positive integer from the user.
     private static int readPositiveInt(Scanner scanner, String message) {
         String input = prompt(scanner, message);
         try {
@@ -174,6 +186,7 @@ public final class LibraryApp {
         }
     }
 
+    // Reads a trimmed line of input from the console.
     private static String prompt(Scanner scanner, String message) {
         System.out.print(message);
         return scanner.nextLine().trim();

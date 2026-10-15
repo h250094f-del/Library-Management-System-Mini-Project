@@ -3,10 +3,12 @@ package library;
 import java.util.ArrayList;
 import java.util.List;
 
+// Small CSV helpers for reading and writing simple table data.
 final class Csv {
     private Csv() {
     }
 
+    // Escapes quotes and joins values into one CSV row.
     static String row(String... fields) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < fields.length; i++) {
@@ -19,6 +21,7 @@ final class Csv {
         return result.toString();
     }
 
+    // Parses one CSV line into columns, including quoted commas and escaped quotes.
     static List<String> parse(String line) {
         List<String> fields = new ArrayList<>();
         StringBuilder field = new StringBuilder();

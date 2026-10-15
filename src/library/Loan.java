@@ -3,6 +3,7 @@ package library;
 import java.time.LocalDate;
 import java.util.Objects;
 
+// One active borrowing record and its due date.
 public final class Loan {
     private final LibraryItem item;
     private final Member member;
@@ -32,6 +33,7 @@ public final class Loan {
         return dueDate;
     }
 
+    // Returns true when the due date is before the given date.
     public boolean isOverdue(LocalDate date) {
         return dueDate.isBefore(Objects.requireNonNull(date, "Date cannot be null"));
     }

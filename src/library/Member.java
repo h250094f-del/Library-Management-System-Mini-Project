@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// A registered user and the loans they currently hold.
 public final class Member {
     public static final int MAX_ACTIVE_LOANS = 3;
 
@@ -28,6 +29,7 @@ public final class Member {
         return Collections.unmodifiableList(activeLoans);
     }
 
+    // Adds a loan when the member is under the borrowing cap.
     public void addLoan(Loan loan) throws MemberLimitExceededException {
         if (activeLoans.size() >= MAX_ACTIVE_LOANS) {
             throw new MemberLimitExceededException(
@@ -37,6 +39,7 @@ public final class Member {
         activeLoans.add(loan);
     }
 
+    // Removes the active loan matching the returned item.
     public void removeLoan(String itemId) {
         activeLoans.removeIf(loan -> loan.getItem().getId().equals(itemId));
     }

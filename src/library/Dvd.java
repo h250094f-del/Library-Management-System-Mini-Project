@@ -1,5 +1,6 @@
 package library;
 
+// A DVD with a runtime value and a shorter loan period.
 public final class Dvd extends LibraryItem {
     private final int runtimeMinutes;
 
